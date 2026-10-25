@@ -1,0 +1,51 @@
+{
+  "packageId": "com.auraai.chatassistant",
+  "host": "localhost:5757",
+  "name": "Aura AI",
+  "launcherName": "Aura AI",
+  "display": "standalone",
+  "themeColor": {
+    "r": 13,
+    "g": 15,
+    "b": 20,
+    "a": 255
+  },
+  "backgroundColor": {
+    "r": 13,
+    "g": 15,
+    "b": 20,
+    "a": 255
+  },
+  "startUrl": "/",
+  "iconUrl": "http://localhost:5757/icon-512.png",
+  "maskableIconUrl": "http://localhost:5757/icon-512.png",
+  "appVersion": "1.0.0",
+  "appVersionCode": 1,
+  "signingKey": {
+    "path": "C:/Users/haris/.gemini/antigravity/scratch/aura-ai/twa-build/aura-ai.keystore",
+    "alias": "aura-ai"
+  },
+  "splashScreenFadeOutDuration": 300,
+  "enableNotifications": true,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "http://localhost:5757/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": {
+      "enabled": false
+    },
+    "playBilling": {
+      "enabled": false
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "minSdkVersion": 21,
+  "orientation": "default",
+  "fullScopeUrl": "http://localhost:5757"
+}

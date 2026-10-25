@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Aura AI — Smart Chat Assistant</title>
+  <meta name="description" content="Aura AI — A powerful GPT-powered chat assistant with image generation, data analysis, and smart tools. Install as an app on Android or iOS."/>
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#0D0F14"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="Aura AI"/>
+  <meta name="application-name" content="Aura AI"/>
+  <meta name="msapplication-TileColor" content="#0D0F14"/>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Aura AI — Smart Chat Assistant"/>
+  <meta property="og:description" content="AI-powered chat, image generation, and data analysis in one app."/>
+  <meta property="og:type" content="website"/>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json"/>
+
+  <!-- Apple Touch Icons (inline SVG fallback) -->
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="icon" type="image/png" href="icon-192.png"/>
+
+  <!-- Fonts & Styles -->
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- Marked.js for markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ══ SIDEBAR ══════════════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-top">
+      <div class="brand">
+        <div class="brand-logo">🤖</div>
+        <div>
+          <div class="brand-name"><span class="brand-badge">Aura AI</span></div>
+          <div style="font-size:11px;color:var(--text-3)">Powered by GPT-4o</div>
+        </div>
+      </div>
+      <button class="new-chat-btn" id="new-chat-btn">
+        <span>✦</span> New Conversation
+      </button>
+    </div>
+
+    <div class="sidebar-body">
+      <div class="sidebar-section-label">Today</div>
+      <div id="chat-history"></div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-btns">
+        <button class="sf-btn" onclick="openSettings()">⚙️ Settings</button>
+        <button class="sf-btn" onclick="showInstallGuide()">📲 Install App</button>
+        <button class="sf-btn" onclick="clearHistory()">🗑 Clear All</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Sidebar overlay for mobile -->
+  <div id="sidebar-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:199;" onclick="closeSidebar()"></div>
+
+  <!-- ══ MAIN AREA ═════════════════════════════════════════════ -->
+  <div class="main">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menu-toggle" aria-label="Toggle sidebar">☰</button>
+
+        <!-- Model selector -->
+        <div class="model-select-wrap" id="model-selector" onclick="toggleModelDropdown()">
+          <div class="model-indicator"></div>
+          <span class="model-name" id="current-model-name">GPT-4o</span>
+          <span class="model-arrow">▾</span>
+        </div>
+
+        <!-- Model dropdown -->
+        <div class="model-dropdown" id="model-dropdown">
+          <div class="model-opt selected" onclick="selectModel('GPT-4o','Most capable','🌟')">
+            <span class="model-opt-icon">🌟</span>
+            <div><div class="model-opt-name">GPT-4o</div><div class="model-opt-desc">Most capable, multimodal</div></div>
+          </div>
+          <div class="model-opt" onclick="selectModel('GPT-4 Turbo','Fast & smart','⚡')">
+            <span class="model-opt-icon">⚡</span>
+            <div><div class="model-opt-name">GPT-4 Turbo</div><div class="model-opt-desc">Fast & smart responses</div></div>
+          </div>
+          <div class="model-opt" onclick="selectModel('Claude 3.5','Best for writing','✍️')">
+            <span class="model-opt-icon">✍️</span>
+            <div><div class="model-opt-name">Claude 3.5</div><div class="model-opt-desc">Best for writing tasks</div></div>
+          </div>
+          <div class="model-opt" onclick="selectModel('Gemini Pro','Google AI','💎')">
+            <span class="model-opt-icon">💎</span>
+            <div><div class="model-opt-name">Gemini Pro</div><div class="model-opt-desc">Google's flagship model</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="topbar-right">
+        <div class="token-counter">Tokens: <span id="token-count">0</span> / 128K</div>
+        <div class="top-btn" onclick="toggleRightPanel()" title="Analysis Panel">📊</div>
+        <div class="top-btn" onclick="shareChat()" title="Share">↗</div>
+        <div class="top-btn" onclick="openSettings()" title="Settings">⚙️</div>
+      </div>
+    </header>
+
+    <!-- Messages area -->
+    <div class="messages-area" id="messages-area">
+      <!-- Welcome screen shown initially -->
+      <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-logo">🤖</div>
+        <h1 class="welcome-title">Hello! I'm <span>Aura AI</span></h1>
+        <p class="welcome-desc">
+          Your intelligent assistant powered by GPT-4o. I can answer questions, analyze data,
+          generate images, write code, and much more. What can I help you with today?
+        </p>
+        <div class="suggestion-grid" id="suggestion-grid">
+          <div class="suggestion-card" onclick="useSuggestion('Analyze this month\'s sales data and give me a visual breakdown with charts')">
+            <div class="sug-icon">📊</div>
+            <div class="sug-title">Analyze Sales Data</div>
+            <div class="sug-desc">Generate charts and insights from your data</div>
+          </div>
+          <div class="suggestion-card" onclick="useSuggestion('Generate 4 creative product images for a tech startup launch')">
+            <div class="sug-icon">🎨</div>
+            <div class="sug-title">Generate Images</div>
+            <div class="sug-desc">Create AI art and product visuals</div>
+          </div>
+          <div class="suggestion-card" onclick="useSuggestion('Write a professional email for a product launch campaign targeting enterprise clients')">
+            <div class="sug-icon">✍️</div>
+            <div class="sug-title">Write Content</div>
+            <div class="sug-desc">Emails, blog posts, marketing copy</div>
+          </div>
+          <div class="suggestion-card" onclick="useSuggestion('Create a Python function to scrape product prices from an e-commerce website with error handling')">
+            <div class="sug-icon">💻</div>
+            <div class="sug-title">Generate Code</div>
+            <div class="sug-desc">Python, JS, SQL, and more</div>
+          </div>
+          <div class="suggestion-card" onclick="useSuggestion('Compare the marketing ROI of different channels: SEO vs. Paid Social vs. Email — show me a visual comparison')">
+            <div class="sug-icon">📈</div>
+            <div class="sug-title">ROI Analysis</div>
+            <div class="sug-desc">Compare channels with charts</div>
+          </div>
+          <div class="suggestion-card" onclick="useSuggestion('Create a detailed business plan for an AI SaaS product with market analysis and financial projections')">
+            <div class="sug-icon">🚀</div>
+            <div class="sug-title">Business Plan</div>
+            <div class="sug-desc">Strategy, analysis, projections</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages rendered here -->
+      <div class="messages-inner" id="messages-inner" style="display:none;"></div>
+    </div>
+
+    <!-- Input area -->
+    <div class="input-area">
+      <div class="input-wrap">
+        <div class="input-toolbar">
+          <button class="tool-btn" id="btn-analyze" onclick="toggleMode('analyze')">
+            <span class="tbtn-icon">📊</span> Analyze
+          </button>
+          <button class="tool-btn" id="btn-imagine" onclick="toggleMode('imagine')">
+            <span class="tbtn-icon">🎨</span> Imagine
+          </button>
+          <button class="tool-btn" id="btn-code" onclick="toggleMode('code')">
+            <span class="tbtn-icon">💻</span> Code
+          </button>
+          <button class="tool-btn" id="btn-search" onclick="toggleMode('search')">
+            <span class="tbtn-icon">🔍</span> Web Search
+          </button>
+          <button class="tool-btn" onclick="openFileUpload()">
+            <span class="tbtn-icon">📎</span> Attach
+          </button>
+        </div>
+
+        <div class="input-box">
+          <textarea
+            class="chat-textarea"
+            id="chat-input"
+            placeholder="Ask Aura anything… (Shift+Enter for new line)"
+            rows="1"
+            aria-label="Chat input"
+          ></textarea>
+          <div class="input-actions">
+            <button class="mic-btn" id="mic-btn" onclick="toggleSpeech()" title="Voice input">🎙</button>
+            <button class="send-btn" id="send-btn" onclick="sendMessage()" disabled title="Send message">➤</button>
+          </div>
+        </div>
+
+        <div class="input-footer">
+          <div class="input-hint">
+            Press <kbd>Enter</kbd> to send · <kbd>Shift+Enter</kbd> for new line
+          </div>
+          <div style="font-size:11px;color:var(--text-3);" id="mode-label">Mode: General</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT PANEL ════════════════════════════════════════════ -->
+  <div class="right-panel" id="right-panel">
+    <div class="right-panel-header">
+      <div class="rp-title">📊 Analysis</div>
+      <button class="rp-close" onclick="toggleRightPanel()">×</button>
+    </div>
+    <div class="right-panel-body">
+
+      <!-- Session stats -->
+      <div class="rp-card">
+        <div class="rp-card-title">Session Stats</div>
+        <div class="rp-stat"><span class="rp-stat-label">Messages</span><span class="rp-stat-value" id="stat-msgs">0</span></div>
+        <div class="rp-stat"><span class="rp-stat-label">Tokens Used</span><span class="rp-stat-value" id="stat-tokens">0</span></div>
+        <div class="rp-stat"><span class="rp-stat-label">Model</span><span class="rp-stat-value" id="stat-model">GPT-4o</span></div>
+        <div class="rp-stat"><span class="rp-stat-label">Avg. Response</span><span class="rp-stat-value" id="stat-avg">—</span></div>
+      </div>
+
+      <!-- Token usage mini chart -->
+      <div class="rp-card">
+        <div class="rp-card-title">Token Usage</div>
+        <div class="mini-chart-wrap">
+          <canvas id="mini-chart-tokens"></canvas>
+        </div>
+      </div>
+
+      <!-- AI Capabilities -->
+      <div class="rp-card">
+        <div class="rp-card-title">Active Capabilities</div>
+        <div class="capability-list">
+          <div class="cap-item"><div class="cap-dot" style="background:var(--emerald)"></div> GPT-4o Vision</div>
+          <div class="cap-item"><div class="cap-dot" style="background:var(--primary)"></div> Data Analysis</div>
+          <div class="cap-item"><div class="cap-dot" style="background:var(--secondary)"></div> Image Generation</div>
+          <div class="cap-item"><div class="cap-dot" style="background:var(--accent)"></div> Code Execution</div>
+          <div class="cap-item"><div class="cap-dot" style="background:var(--amber)"></div> Web Search</div>
+          <div class="cap-item"><div class="cap-dot" style="background:var(--text-3)"></div> Voice Input</div>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="rp-card">
+        <div class="rp-card-title">Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <button class="sf-btn" onclick="useSuggestion('Summarize our conversation so far')">📝 Summarize Chat</button>
+          <button class="sf-btn" onclick="exportChat()">⬇ Export Chat</button>
+          <button class="sf-btn" onclick="useSuggestion('What are the key insights from this conversation?')">💡 Key Insights</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- ══ SETTINGS PANEL ════════════════════════════════════════════ -->
+<div class="settings-panel hidden" id="settings-panel">
+  <div class="settings-box">
+    <div class="settings-header">
+      <div class="settings-title">⚙️ Settings</div>
+      <button class="rp-close" onclick="closeSettings()">×</button>
+    </div>
+    <div class="settings-body">
+
+      <div class="settings-group">
+        <div class="settings-label">API Configuration</div>
+        <div class="form-group" style="margin-bottom:0">
+          <label style="font-size:12px;color:var(--text-2);display:block;margin-bottom:6px;">OpenAI API Key</label>
+          <input type="password" class="api-input" id="api-key-input" placeholder="sk-...  (stored locally, never shared)"/>
+          <div style="font-size:11px;color:var(--text-3);margin-top:4px;">Your key is stored only in your browser's localStorage</div>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-label">Model Behavior</div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Temperature</div><div class="settings-row-desc">Creativity vs. precision</div></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <input type="range" class="range-input" id="temp-slider" min="0" max="2" step="0.1" value="0.7" style="width:80px" oninput="document.getElementById('temp-val').textContent=this.value"/>
+            <span id="temp-val" style="font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--primary);min-width:25px">0.7</span>
+          </div>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Max Tokens</div><div class="settings-row-desc">Response length limit</div></div>
+          <select class="settings-select" id="max-tokens">
+            <option value="1024">1,024</option>
+            <option value="2048">2,048</option>
+            <option value="4096" selected>4,096</option>
+            <option value="8192">8,192</option>
+          </select>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">System Prompt</div><div class="settings-row-desc">AI persona &amp; context</div></div>
+          <select class="settings-select" id="system-prompt-sel">
+            <option value="assistant">General Assistant</option>
+            <option value="analyst">Data Analyst</option>
+            <option value="developer">Senior Developer</option>
+            <option value="marketer">Marketing Expert</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="settings-group">
+        <div class="settings-label">Features</div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Markdown Rendering</div></div>
+          <label class="toggle-sw"><input type="checkbox" id="toggle-markdown" checked/><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Auto-scroll to Latest</div></div>
+          <label class="toggle-sw"><input type="checkbox" id="toggle-autoscroll" checked/><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Sound Notifications</div></div>
+          <label class="toggle-sw"><input type="checkbox" id="toggle-sound"/><span class="toggle-slider"></span></label>
+        </div>
+        <div class="settings-row">
+          <div><div class="settings-row-label">Save Conversations</div></div>
+          <label class="toggle-sw"><input type="checkbox" id="toggle-save" checked/><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:10px;padding-top:4px;">
+        <button class="sf-btn" onclick="closeSettings()">Cancel</button>
+        <button class="new-chat-btn" style="width:auto;padding:9px 20px;" onclick="saveSettings()">Save Settings</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ INSTALL BANNER ════════════════════════════════════════════ -->
+<div class="install-banner hidden" id="install-banner">
+  <div class="install-icon">📲</div>
+  <div class="install-text">
+    <div class="install-title">Install Aura AI App</div>
+    <div class="install-desc">Add to your home screen for the full app experience</div>
+  </div>
+  <button class="install-btn" id="install-btn" onclick="triggerInstall()">Install</button>
+  <button class="install-dismiss" onclick="dismissInstall()">×</button>
+</div>
+
+<!-- ══ TOAST ════════════════════════════════════════════════════ -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- ══ HIDDEN FILE INPUT ═══════════════════════════════════════ -->
+<input type="file" id="file-input" style="display:none"
+  accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt,.ppt,.pptx"
+  onchange="handleFileUpload(this)"/>
+
+<script src="app.js"></script>
+</body>
+</html>

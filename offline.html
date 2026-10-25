@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Aura AI — Offline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0D0F14;
+      color: #F0F2F8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 24px;
+    }
+    .container { max-width: 380px; }
+    .icon { font-size: 64px; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    h1 { font-size: 24px; font-weight: 800; margin-bottom: 10px; background: linear-gradient(135deg, hsl(217,91%,60%), hsl(280,80%,65%)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    p { font-size: 15px; color: #8B92A8; line-height: 1.7; margin-bottom: 24px; }
+    button { background: linear-gradient(135deg, hsl(217,91%,60%), hsl(280,80%,65%)); border: none; border-radius: 12px; color: #fff; padding: 12px 28px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; transition: transform 0.2s; }
+    button:hover { transform: scale(1.05); }
+    .tip { font-size: 12px; color: #555D72; margin-top: 16px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">🤖</div>
+    <h1>You're Offline</h1>
+    <p>Aura AI needs an internet connection for full AI responses. Your conversations are saved locally and will sync when you reconnect.</p>
+    <button onclick="window.location.reload()">Try Again</button>
+    <div class="tip">💡 Tip: Your chat history is available offline</div>
+  </div>
+</body>
+</html>

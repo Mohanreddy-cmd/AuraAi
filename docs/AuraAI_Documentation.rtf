@@ -1,0 +1,26 @@
+{\rtf1\ansi\deff0{\fonttbl{\f0 Times New Roman;}}\fs24\lang1033
+{\pard\qc\fs32\b Abstract\b0\par}
+{\pard\fs28\ql\par}
+{\pard\fs28 AuraAI is an e‑commerce platform built as a Progressive Web App (PWA) with a Capacitor Android wrapper. It provides AI‑driven product search and recommendation capabilities using OpenAI models. In demo mode the app runs with a mock API; the recent enhancement enables attachment of various document types (PDF, DOCX, XLSX, CSV, TXT, PPTX) alongside images.\par}
+{\pard\qc\fs32\b Existing System & Proposed System\b0\par}
+{\pard\fs28\ql The existing system consists of a client‑side UI built with React, a service worker for offline caching, and a thin Capacitor bridge to Android. Communication with OpenAI is performed via a server proxy (Node.js). The current limitation is that only image files are accepted for upload.\par}
+The proposed system extends the upload service to support additional document formats by updating the file‑type whitelist, adjusting the UI preview bar, and enhancing the server‑side validation. This allows users to attach product manuals, specifications, and other resources directly within chat interactions.\par}
+{\pard\qc\fs32\b Architecture Diagram\b0\par}
+{\pard\fs28\ql See the placeholder image "architecture.png" placed in the docs folder for the system architecture illustration.\par}
+{\pard\qc\fs32\b Database Design\b0\par}
+{\pard\fs28\ql The application does not employ a persistent relational database. State is stored in the browser’s localStorage. For documentation purposes the logical schema includes:\par}
+{\pard\fs28\ql \tab • Users: {"id": string, "settings": object}\par}
+{\pard\fs28\ql \tab • Conversations: {"id": string, "messages": array, "timestamp": string}\par}
+{\pard\qc\fs32\b Advantages\b0\par}
+{\pard\fs28\ql • Offline capability via service worker caching\par}
+{\pard\fs28\ql • Cross‑platform deployment (Web, Android)\par}
+{\pard\fs28\ql • AI‑enhanced product search and recommendation\par}
+{\pard\fs28\ql • New support for diverse document attachments\par}
+{\pard\qc\fs32\b Future Enhancements\b0\par}
+{\pard\fs28\ql • Integrate a real backend database (e.g., SQLite, Firestore) to persist user data and conversation history\par}
+{\pard\fs28\ql • Implement user authentication and role‑based access\par}
+{\pard\fs28\ql • Expand AI capabilities with fine‑tuned models and multi‑modal inputs\par}
+{\pard\fs28\ql • Provide analytics dashboard for document usage\par}
+{\pard\fs28\ql • Add richer UI components and customizable themes\par}
+{\pard\par}
+}

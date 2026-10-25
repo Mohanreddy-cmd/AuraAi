@@ -1,0 +1,35 @@
+{
+  "name": "aura-ai",
+  "version": "1.0.0",
+  "description": "Aura AI — GPT-powered chat assistant PWA with APK packaging",
+  "main": "app.js",
+  "scripts": {
+    "start":       "npx serve . -p 3000",
+    "dev":         "npx live-server --port=3000 --host=localhost",
+    "serve-https": "npx serve . -p 3000 --ssl-cert=cert.pem --ssl-key=key.pem",
+    "tunnel":      "npx ngrok http 3000",
+    "build-apk":   "node build-apk.js",
+    "pwa-check":   "npx pwabuilder-cli analyze http://localhost:3000",
+    "gen-icons":   "node generate-icons-node.js",
+    "deploy":      "npx gh-pages -d ."
+  },
+  "keywords": ["ai", "pwa", "gpt", "chatbot", "android", "apk"],
+  "license": "MIT",
+  "devDependencies": {
+    "@bubblewrap/cli": "^1.21.1",
+    "serve": "^14.2.3",
+    "live-server": "^1.2.2",
+    "sharp": "^0.33.2",
+    "gh-pages": "^6.1.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm":  ">=8.0.0"
+  },
+  "pwa": {
+    "startUrl": "/",
+    "scope": "/",
+    "themeColor": "#0D0F14",
+    "backgroundColor": "#0D0F14"
+  }
+}

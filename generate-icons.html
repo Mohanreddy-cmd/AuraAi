@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"/><title>Icon Generator</title></head>
+<body>
+<script>
+// Generate all required icon sizes for the PWA
+const sizes = [48, 72, 96, 128, 192, 256, 512];
+
+sizes.forEach(size => {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+  const p = size / 192; // scale factor
+
+  // Background — rounded rect (simulated with arc)
+  const r = size * 0.22;
+  ctx.beginPath();
+  ctx.moveTo(r, 0); ctx.lineTo(size - r, 0);
+  ctx.quadraticCurveTo(size, 0, size, r);
+  ctx.lineTo(size, size - r);
+  ctx.quadraticCurveTo(size, size, size - r, size);
+  ctx.lineTo(r, size); ctx.quadraticCurveTo(0, size, 0, size - r);
+  ctx.lineTo(0, r); ctx.quadraticCurveTo(0, 0, r, 0);
+  ctx.closePath();
+
+  // Gradient background
+  const grad = ctx.createLinearGradient(0, 0, size, size);
+  grad.addColorStop(0, '#3B82F6');
+  grad.addColorStop(0.5, '#8B5CF6');
+  grad.addColorStop(1, '#EC4899');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Outer glow ring
+  ctx.beginPath();
+  ctx.arc(size/2, size/2, size*0.42, 0, Math.PI*2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = size * 0.04;
+  ctx.stroke();
+
+  // Robot face — head
+  const headW = size * 0.52;
+  const headH = size * 0.44;
+  const headX = (size - headW) / 2;
+  const headY = size * 0.22;
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.beginPath();
+  const hr = headW * 0.18;
+  ctx.moveTo(headX + hr, headY);
+  ctx.lineTo(headX + headW - hr, headY);
+  ctx.quadraticCurveTo(headX + headW, headY, headX + headW, headY + hr);
+  ctx.lineTo(headX + headW, headY + headH - hr);
+  ctx.quadraticCurveTo(headX + headW, headY + headH, headX + headW - hr, headY + headH);
+  ctx.lineTo(headX + hr, headY + headH);
+  ctx.quadraticCurveTo(headX, headY + headH, headX, headY + headH - hr);
+  ctx.lineTo(headX, headY + hr);
+  ctx.quadraticCurveTo(headX, headY, headX + hr, headY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Antenna
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.fillRect(size/2 - size*0.03, size*0.1, size*0.06, size*0.14);
+  ctx.beginPath();
+  ctx.arc(size/2, size*0.09, size*0.06, 0, Math.PI*2);
+  ctx.fillStyle = '#60A5FA';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+  ctx.lineWidth = size*0.025;
+  ctx.stroke();
+
+  // Eyes
+  const eyeY = headY + headH * 0.32;
+  const eyeR = size * 0.07;
+  // Left eye
+  ctx.beginPath();
+  ctx.arc(size/2 - size*0.14, eyeY, eyeR, 0, Math.PI*2);
+  const eyeGrad = ctx.createRadialGradient(size/2 - size*0.14, eyeY, 0, size/2 - size*0.14, eyeY, eyeR);
+  eyeGrad.addColorStop(0, '#93C5FD');
+  eyeGrad.addColorStop(1, '#3B82F6');
+  ctx.fillStyle = eyeGrad;
+  ctx.fill();
+  // Right eye
+  ctx.beginPath();
+  ctx.arc(size/2 + size*0.14, eyeY, eyeR, 0, Math.PI*2);
+  ctx.fillStyle = eyeGrad;
+  ctx.fill();
+  // Eye shines
+  ctx.fillStyle = 'rgba(255,255,255,0.7)';
+  ctx.beginPath(); ctx.arc(size/2 - size*0.12, eyeY - eyeR*0.3, eyeR*0.3, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(size/2 + size*0.16, eyeY - eyeR*0.3, eyeR*0.3, 0, Math.PI*2); ctx.fill();
+
+  // Mouth — smile arc
+  ctx.beginPath();
+  ctx.arc(size/2, headY + headH * 0.68, size * 0.1, 0, Math.PI);
+  ctx.strokeStyle = '#3B82F6';
+  ctx.lineWidth = size * 0.04;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Chin / neck
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.fillRect(size/2 - size*0.06, headY + headH - size*0.01, size*0.12, size*0.1);
+
+  // Body  
+  const bodyW = size * 0.58;
+  const bodyH = size * 0.18;
+  const bodyX = (size - bodyW) / 2;
+  const bodyY = headY + headH + size * 0.09;
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  const br = bodyH * 0.4;
+  ctx.beginPath();
+  ctx.moveTo(bodyX + br, bodyY);
+  ctx.lineTo(bodyX + bodyW - br, bodyY);
+  ctx.quadraticCurveTo(bodyX + bodyW, bodyY, bodyX + bodyW, bodyY + br);
+  ctx.lineTo(bodyX + bodyW, bodyY + bodyH - br);
+  ctx.quadraticCurveTo(bodyX + bodyW, bodyY + bodyH, bodyX + bodyW - br, bodyY + bodyH);
+  ctx.lineTo(bodyX + br, bodyY + bodyH);
+  ctx.quadraticCurveTo(bodyX, bodyY + bodyH, bodyX, bodyY + bodyH - br);
+  ctx.lineTo(bodyX, bodyY + br);
+  ctx.quadraticCurveTo(bodyX, bodyY, bodyX + br, bodyY);
+  ctx.closePath();
+  ctx.fill();
+
+  // Body dots
+  const dotY = bodyY + bodyH/2;
+  [0.38, 0.5, 0.62].forEach(x => {
+    ctx.beginPath();
+    ctx.arc(size*x, dotY, size*0.025, 0, Math.PI*2);
+    ctx.fillStyle = '#3B82F6';
+    ctx.fill();
+  });
+
+  // Download the icon
+  const link = document.createElement('a');
+  link.download = `icon-${size}.png`;
+  link.href = canvas.toDataURL('image/png');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+});
+
+document.body.innerHTML = '<p style="font-family:sans-serif;padding:20px;color:#333">✅ All icons generated and downloaded! Check your Downloads folder for icon-48.png through icon-512.png. Copy them to the aura-ai folder.</p>';
+</script>
+</body>
+</html>
